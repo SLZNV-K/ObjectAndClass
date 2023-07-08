@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="WallServiceTest" tests="3" skipped="0" failures="0" errors="0" timestamp="2023-07-06T17:54:06" hostname="LAPTOP-33FPNSHN" time="0.077">
+  <properties/>
+  <testcase name="updateFalse" classname="WallServiceTest" time="0.049"/>
+  <testcase name="updateTrue" classname="WallServiceTest" time="0.0"/>
+  <testcase name="add" classname="WallServiceTest" time="0.027"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>
