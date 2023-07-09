@@ -8,7 +8,18 @@ class WallServiceTest {
     @Test
     fun add() {
         var idPost = 0
-        val post = Post(id = 8, text = "TEXT", comments = Comments(0), likes = Likes(0))
+        val post = Post(
+            id = 8,
+            text = "Text1",
+            comments = Comments(),
+            likes = Likes(),
+            copyright = Copyright(1),
+            geo = Geo(place = Place()),
+            attachment = AudioAttachment(audio = Audio(id = 1), type = "audio"),
+            reposts = Reposts(),
+            views = Views(),
+            postSource = PostSource()
+        )
         var posts = emptyArray<Post>()
         idPost += 1
         posts += post.copy(id = idPost)
@@ -20,9 +31,48 @@ class WallServiceTest {
     @Test
     fun updateTrue() {
         val wallService = WallService()
-        wallService.add(Post(id = 1, text = "TEXT", comments = Comments(2), likes = Likes(0)))
-        wallService.add(Post(id = 2, text = "TEXT", comments = Comments(3), likes = Likes(10)))
-        val update = Post(id = 1, text = "UPDATE", comments = Comments(4), likes = Likes(2))
+        wallService.add(
+            Post(
+                id = 1,
+                text = "Text1",
+                comments = Comments(),
+                likes = Likes(),
+                copyright = Copyright(1),
+                geo = Geo(place = Place()),
+                attachment = AudioAttachment(audio = Audio(id = 1), type = "audio"),
+                reposts = Reposts(),
+                views = Views(),
+                postSource = PostSource()
+            )
+        )
+
+        wallService.add(
+            Post(
+                id = 2,
+                text = "Text1",
+                comments = Comments(),
+                likes = Likes(),
+                copyright = Copyright(1),
+                geo = Geo(place = Place()),
+                attachment = AudioAttachment(audio = Audio(id = 1), type = "audio"),
+                reposts = Reposts(),
+                views = Views(),
+                postSource = PostSource()
+            )
+        )
+
+        val update = Post(
+            id = 2,
+            text = "Update",
+            comments = Comments(49),
+            likes = Likes(67),
+            copyright = Copyright(1),
+            geo = Geo(place = Place()),
+            attachment = AudioAttachment(audio = Audio(id = 1), type = "audio"),
+            reposts = Reposts(),
+            views = Views(),
+            postSource = PostSource()
+        )
         val result = wallService.update(update)
 
         assertTrue(result)
@@ -31,9 +81,48 @@ class WallServiceTest {
     @Test
     fun updateFalse() {
         val wallService = WallService()
-        wallService.add(Post(id = 1, text = "TEXT", comments = Comments(2), likes = Likes(0)))
-        wallService.add(Post(id = 2, text = "TEXT", comments = Comments(3), likes = Likes(10)))
-        val update = Post(id = 11, text = "UPDATE", comments = Comments(4), likes = Likes(2))
+        wallService.add(
+            Post(
+                id = 1,
+                text = "Text1",
+                comments = Comments(),
+                likes = Likes(),
+                copyright = Copyright(1),
+                geo = Geo(place = Place()),
+                attachment = AudioAttachment(audio = Audio(id = 1), type = "audio"),
+                reposts = Reposts(),
+                views = Views(),
+                postSource = PostSource()
+            )
+        )
+
+        wallService.add(
+            Post(
+                id = 2,
+                text = "Text1",
+                comments = Comments(),
+                likes = Likes(),
+                copyright = Copyright(1),
+                geo = Geo(place = Place()),
+                attachment = AudioAttachment(audio = Audio(id = 1), type = "audio"),
+                reposts = Reposts(),
+                views = Views(),
+                postSource = PostSource()
+            )
+        )
+
+        val update = Post(
+            id = 11,
+            text = "Update",
+            comments = Comments(49),
+            likes = Likes(67),
+            copyright = Copyright(1),
+            geo = Geo(place = Place()),
+            attachment = AudioAttachment(audio = Audio(id = 1), type = "audio"),
+            reposts = Reposts(),
+            views = Views(),
+            postSource = PostSource()
+        )
         val result = wallService.update(update)
 
         assertFalse(result)

@@ -1,34 +1,88 @@
-class Comments(
-    var count: Int,
-    var canPost: Boolean = true
-) {
-    override fun toString(): String {
-        return "Comments(count: $count, canPost: $canPost)"
-    }
-}
-
-class Likes(
-    var count: Int,
-    var userLikes: Boolean = false,
-    var canLike: Boolean = true
-) {
-    override fun toString(): String {
-        return "Likes(count: $count, userLikes: $userLikes, canLike: $canLike)"
-    }
-}
-
 data class Post(
     val id: Int,
-    val postType: String = "post",
+    val ownerId: Int = 0,
+    val fromId: Int = 0,
+    val createdBy: Int = 0,
     val date: Int = 0,
     val text: String,
-    val friendsOnly: Boolean = false,
-    val canPin: Boolean = true,
-    val canDelete: Boolean = true,
-    val canEdit: Boolean = true,
+    val replyOwnerId: Int = 0,
+    val replyPostId: Int = 0,
+    var friendsOnly: Boolean = false,
     val comments: Comments,
-    val likes: Likes
+    val copyright: Copyright? = null,
+    val likes: Likes,
+    val reposts: Reposts,
+    val views: Views,
+    val postType: String = "post",
+    val postSource: PostSource? = null,
+    val geo: Geo,
+    val signerId: Int = 0,
+    var canPin: Boolean = true,
+    var canDelete: Boolean = true,
+    var canEdit: Boolean = true,
+    var isPinned: Boolean = false,
+    var markedAsAds: Boolean = false,
+    var isFavorite: Boolean = false,
+    val postponedId: Int = 0,
+    val attachment: Attachment,
+    val attachments: Array<Attachment> = emptyArray()
 )
+
+data class Comments(
+    var count: Int = 0,
+    var canPost: Boolean = true
+)
+
+data class Likes(
+    var count: Int = 0,
+    var userLikes: Boolean = false,
+    var canLike: Boolean = true
+)
+
+class Copyright(
+    val id: Int = 0,
+    val link: String = "",
+    val name: String = "",
+    val type: String = ""
+)
+
+class Geo(
+    val type: String = "",
+    val coordinate: String = "",
+    val place: Place
+)
+
+class Place(
+    val id: Int = 0,
+    val title: String = "",
+    val latitude: Int = 0,
+    val longitude: Int = 0,
+    val created: Int = 0,
+    val icon: String = "",
+    val checkins: Int = 0,
+    val updated: Int = 0,
+    val type: Int = 0,
+    val country: Int = 0,
+    val city: Int = 0,
+    val address: String = ""
+)
+
+class PostSource(
+    val type: String = "",
+    val platform: String = "",
+    val data: String = "",
+    val url: String = ""
+)
+
+class Views(
+    var count: Int = 0
+)
+
+class Reposts(
+    var count: Int = 0,
+    var userReposted: Boolean = false
+)
+
 
 class WallService {
     private var posts = emptyArray<Post>()
@@ -42,30 +96,69 @@ class WallService {
 
     fun update(updatedPost: Post): Boolean {
         for ((index, post) in posts.withIndex()) {
-            return if (post.id == updatedPost.id) {
+            if (post.id == updatedPost.id) {
                 posts[index] = post.copy(
                     postType = updatedPost.postType,
-                    date =updatedPost.date,
+                    date = updatedPost.date,
                     text = updatedPost.text,
                     friendsOnly = updatedPost.friendsOnly,
                     canPin = updatedPost.canPin,
                     canDelete = updatedPost.canDelete,
                     canEdit = updatedPost.canEdit,
-                    likes = updatedPost.likes,
-                    comments = updatedPost.comments
+                    likes = updatedPost.likes.copy(),
+                    comments = updatedPost.comments.copy()
                 )
-                true
-            } else false
+                return true
+            }
         }
-        return true
+        return false
     }
 }
 
 fun main() {
     val wallService = WallService()
-    wallService.add(Post(id = 1, text = "TEXT", comments = Comments(2), likes = Likes(0)))
-    wallService.add(Post(id = 2, text = "TEXT", comments = Comments(3), likes = Likes(10)))
-    val update = Post(id = 1, text = "UPDATE", comments = Comments(4), likes = Likes(2))
+    wallService.add(
+        Post(
+            id = 1,
+            text = "Text1",
+            comments = Comments(),
+            likes = Likes(),
+            copyright = Copyright(1),
+            geo = Geo(place = Place()),
+            attachment = AudioAttachment(audio = Audio(id = 1), type = "audio"),
+            reposts = Reposts(),
+            views = Views(),
+            postSource = PostSource()
+        )
+    )
+
+    wallService.add(
+        Post(
+            id = 3,
+            text = "Text2",
+            comments = Comments(),
+            likes = Likes(),
+            copyright = Copyright(1),
+            geo = Geo(place = Place()),
+            attachment = AudioAttachment(audio = Audio(id = 1), type = "audio"),
+            reposts = Reposts(),
+            views = Views(),
+            postSource = PostSource()
+        )
+    )
+    val update = Post(
+        id = 1,
+        text = "Update",
+        comments = Comments(49),
+        likes = Likes(67),
+        copyright = Copyright(1),
+        geo = Geo(place = Place()),
+        attachment = AudioAttachment(audio = Audio(id = 1), type = "audio"),
+        reposts = Reposts(),
+        views = Views(),
+        postSource = PostSource()
+    )
+
     wallService.update(update)
 
 }
