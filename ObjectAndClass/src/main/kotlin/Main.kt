@@ -8,10 +8,12 @@ data class Post(
     val replyOwnerId: Int = 0,
     val replyPostId: Int = 0,
     var friendsOnly: Boolean = false,
+    val comment: Comment,
     val comments: Comments,
     val copyright: Copyright? = null,
     val likes: Likes,
     val reposts: Reposts,
+    val report: Report,
     val views: Views,
     val postType: String = "post",
     val postSource: PostSource? = null,
@@ -28,6 +30,13 @@ data class Post(
     val attachments: Array<Attachment> = emptyArray()
 )
 
+data class Comment(
+    val id: Int = 0,
+    val ownerId: Int = 0,
+    val date: Int = 0,
+    val text: String = ""
+)
+
 data class Comments(
     var count: Int = 0,
     var canPost: Boolean = true
@@ -39,20 +48,20 @@ data class Likes(
     var canLike: Boolean = true
 )
 
-class Copyright(
+data class Copyright(
     val id: Int = 0,
     val link: String = "",
     val name: String = "",
     val type: String = ""
 )
 
-class Geo(
+data class Geo(
     val type: String = "",
     val coordinate: String = "",
     val place: Place
 )
 
-class Place(
+data class Place(
     val id: Int = 0,
     val title: String = "",
     val latitude: Int = 0,
@@ -67,26 +76,34 @@ class Place(
     val address: String = ""
 )
 
-class PostSource(
+data class PostSource(
     val type: String = "",
     val platform: String = "",
     val data: String = "",
     val url: String = ""
 )
 
-class Views(
+data class Views(
     var count: Int = 0
 )
 
-class Reposts(
+data class Reposts(
     var count: Int = 0,
     var userReposted: Boolean = false
+)
+
+data class Report(
+    val ownerId: Int = 0,
+    val commentId: Int = 0,
+    val reason: Int = 0
 )
 
 
 class WallService {
     private var posts = emptyArray<Post>()
+    private var comments = emptyArray<Comment>()
     private var idPost = 0
+    private var reposts = emptyArray<Report>()
 
     fun add(post: Post): Post {
         idPost += 1
@@ -113,6 +130,36 @@ class WallService {
         }
         return false
     }
+
+    fun createComment(postId: Int, comment: Comment): Comment {
+        for (post in posts) {
+            if (postId == post.id) {
+                comments += comment
+                return comment
+            }
+        }
+        return throw PostNotFoundException("Not found post with id $postId")
+    }
+
+    fun reportComment(report: Report): Report {
+        if (report.reason !in 1..8) {
+            return throw InvalidReasonException("Invalid reason for report")
+        }
+
+        for (post in posts) {
+            if (report.ownerId != post.ownerId) {
+                return throw InvalidOwnerIdException("Not found owner id")
+            }
+        }
+
+        for (post in posts) {
+            if (post.comment.id == report.commentId) {
+                reposts += report
+                return report
+            }
+        }
+        return throw InvalidCommentIdException("Not found comment id")
+    }
 }
 
 fun main() {
@@ -121,12 +168,14 @@ fun main() {
         Post(
             id = 1,
             text = "Text1",
+            comment = Comment(),
             comments = Comments(),
             likes = Likes(),
             copyright = Copyright(1),
             geo = Geo(place = Place()),
             attachment = AudioAttachment(audio = Audio(id = 1), type = "audio"),
             reposts = Reposts(),
+            report = Report(),
             views = Views(),
             postSource = PostSource()
         )
@@ -136,11 +185,13 @@ fun main() {
         Post(
             id = 3,
             text = "Text2",
+            comment = Comment(),
             comments = Comments(),
             likes = Likes(),
             copyright = Copyright(1),
             geo = Geo(place = Place()),
             attachment = AudioAttachment(audio = Audio(id = 1), type = "audio"),
+            report = Report(),
             reposts = Reposts(),
             views = Views(),
             postSource = PostSource()
@@ -149,16 +200,22 @@ fun main() {
     val update = Post(
         id = 1,
         text = "Update",
-        comments = Comments(49),
+        comment = Comment(),
+        comments = Comments(),
         likes = Likes(67),
         copyright = Copyright(1),
         geo = Geo(place = Place()),
         attachment = AudioAttachment(audio = Audio(id = 1), type = "audio"),
+        report = Report(),
         reposts = Reposts(),
         views = Views(),
         postSource = PostSource()
     )
 
     wallService.update(update)
+
+    wallService.createComment(1, Comment())
+
+    wallService.reportComment(Report(0, 0, 3))
 
 }
