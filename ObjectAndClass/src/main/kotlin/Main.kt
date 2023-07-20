@@ -30,6 +30,20 @@ data class Post(
     val attachments: Array<Attachment> = emptyArray()
 )
 
+data class Note(
+    var noteId: Int,
+    val title: String,
+    var text: String,
+    var noteComments: List<NoteComment>,
+)
+
+data class NoteComment(
+    var noteCommentId: Int,
+    var message: String,
+    val minLength: Int = 2,
+    var isDeleted: Boolean = false
+)
+
 data class Comment(
     val id: Int = 0,
     val ownerId: Int = 0,
@@ -101,7 +115,7 @@ data class Report(
 
 class WallService {
     private var posts = emptyArray<Post>()
-    private var comments = emptyArray<Comment>()
+    private var postComments = emptyArray<Comment>()
     private var idPost = 0
     private var reposts = emptyArray<Report>()
 
@@ -134,7 +148,7 @@ class WallService {
     fun createComment(postId: Int, comment: Comment): Comment {
         for (post in posts) {
             if (postId == post.id) {
-                comments += comment
+                postComments += comment
                 return comment
             }
         }
@@ -162,9 +176,78 @@ class WallService {
     }
 }
 
+class NoteService {
+    private var notes = mutableListOf<Note>()
+    fun add(note: Note): Int {
+        notes += note
+        note.noteId = notes.indexOf(note)
+        return note.noteId
+    }
+
+    fun createComment(noteId: Int, noteComment: NoteComment): Int {
+        if (noteComment.message.length > noteComment.minLength) {
+            notes[noteId].noteComments += noteComment
+            noteComment.noteCommentId = notes[noteId].noteComments.indexOf(noteComment)
+            return noteComment.noteCommentId
+        }
+        return -1
+    }
+
+    fun delete(noteId: Int): Int {
+        for (noteComm in notes[noteId].noteComments) {
+            noteComm.isDeleted = true
+        }
+        notes.removeAt(noteId)
+        return 1
+    }
+
+    fun deleteComment(noteId: Int, commentId: Int): Int {
+        for (noteComm in notes[noteId].noteComments) {
+            if (noteComm.noteCommentId == commentId) {
+                noteComm.isDeleted = true
+                return 1
+            }
+        }
+        return -1
+    }
+
+    fun edit(note: Note, newText: String): Int {
+        note.text = newText
+        return 1
+    }
+
+    fun editComment(noteId: Int, noteCommentId: Int, newMessage: String): Int {
+        if (newMessage.length > notes[noteId].noteComments[noteCommentId].minLength) {
+            notes[noteId].noteComments[noteCommentId].message = newMessage
+            return 1
+        }
+        return -1
+    }
+
+    fun get(): List<Note> {
+        return notes
+    }
+
+    fun getById(noteId: Int): Note {
+        return notes[noteId]
+    }
+
+    fun getComments(noteId: Int): List<NoteComment> {
+        return notes[noteId].noteComments
+    }
+
+    fun restoreComment(noteId: Int, commentId: Int): Int {
+        if (notes[noteId].noteComments[commentId].isDeleted) {
+            notes[noteId].noteComments[commentId].isDeleted = false
+            return 1
+        }
+        return -1
+    }
+}
+
 fun main() {
-    val wallService = WallService()
-    wallService.add(
+    val postService = WallService()
+    postService.add(
         Post(
             id = 1,
             text = "Text1",
@@ -181,7 +264,7 @@ fun main() {
         )
     )
 
-    wallService.add(
+    postService.add(
         Post(
             id = 3,
             text = "Text2",
@@ -212,10 +295,41 @@ fun main() {
         postSource = PostSource()
     )
 
-    wallService.update(update)
+    postService.update(update)
 
-    wallService.createComment(1, Comment())
+    postService.createComment(1, Comment())
 
-    wallService.reportComment(Report(0, 0, 3))
+    postService.reportComment(Report(0, 0, 3))
+
+//    NOTE SERVICE
+    val noteService = NoteService()
+
+    noteService.add(Note(2, "0", "", listOf()))
+    noteService.add(Note(1, "1", "", listOf()))
+    noteService.add(Note(23, "2", "", listOf()))
+
+    noteService.createComment(0, NoteComment(2, "jkhfg"))
+    println(noteService.get())
+
+    noteService.delete(1)
+    println(noteService.get())
+
+    noteService.deleteComment(0,0)
+    println(noteService.get())
+
+    val editedNote = Note(2,"3","", listOf())
+    println(editedNote)
+    noteService.edit(editedNote, "new text")
+    println(editedNote)
+
+    println(noteService.getById(0))
+
+    println(noteService.getComments(0))
+
+    println(noteService.restoreComment(0,0))
+    println(noteService.get())
+
+
+
 
 }

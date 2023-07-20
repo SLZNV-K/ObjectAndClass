@@ -32,8 +32,8 @@ class WallServiceTest {
 
     @Test
     fun updateTrue() {
-        val wallService = WallService()
-        wallService.add(
+        val postService = WallService()
+        postService.add(
             Post(
                 id = 1,
                 text = "Text1",
@@ -50,7 +50,7 @@ class WallServiceTest {
             )
         )
 
-        wallService.add(
+        postService.add(
             Post(
                 id = 2,
                 text = "Text1",
@@ -81,15 +81,15 @@ class WallServiceTest {
             views = Views(),
             postSource = PostSource()
         )
-        val result = wallService.update(update)
+        val result = postService.update(update)
 
         assertTrue(result)
     }
 
     @Test
     fun updateFalse() {
-        val wallService = WallService()
-        wallService.add(
+        val postService = WallService()
+        postService.add(
             Post(
                 id = 1,
                 text = "Text1",
@@ -106,7 +106,7 @@ class WallServiceTest {
             )
         )
 
-        wallService.add(
+        postService.add(
             Post(
                 id = 2,
                 text = "Text1",
@@ -137,15 +137,15 @@ class WallServiceTest {
             views = Views(),
             postSource = PostSource()
         )
-        val result = wallService.update(update)
+        val result = postService.update(update)
 
         assertFalse(result)
     }
 
     @Test(expected = PostNotFoundException::class)
     fun shouldThrow() {
-        val wallService = WallService()
-        wallService.add(
+        val postService = WallService()
+        postService.add(
             Post(
                 id = 1,
                 text = "Text1",
@@ -161,13 +161,13 @@ class WallServiceTest {
                 postSource = PostSource()
             )
         )
-        wallService.createComment(194, Comment())
+        postService.createComment(194, Comment())
     }
 
     @Test
     fun shouldNotThrow() {
-        val wallService = WallService()
-        wallService.add(
+        val postService = WallService()
+        postService.add(
             Post(
                 id = 1,
                 text = "Text1",
@@ -183,13 +183,13 @@ class WallServiceTest {
                 postSource = PostSource()
             )
         )
-        assertEquals(Comment(id = 0), wallService.createComment(1, Comment(id = 0)))
+        assertEquals(Comment(id = 0), postService.createComment(1, Comment(id = 0)))
     }
 
     @Test(expected = InvalidCommentIdException::class)
     fun commentIdThrow() {
-        val wallService = WallService()
-        wallService.add(
+        val postService = WallService()
+        postService.add(
             Post(
                 id = 1,
                 text = "Text1",
@@ -205,13 +205,13 @@ class WallServiceTest {
                 postSource = PostSource()
             )
         )
-        wallService.reportComment(Report(0, 6, 6))
+        postService.reportComment(Report(0, 6, 6))
     }
 
     @Test(expected = InvalidReasonException::class)
     fun reasonIdThrow() {
-        val wallService = WallService()
-        wallService.add(
+        val postService = WallService()
+        postService.add(
             Post(
                 id = 1,
                 text = "Text1",
@@ -227,13 +227,13 @@ class WallServiceTest {
                 postSource = PostSource()
             )
         )
-        wallService.reportComment(Report(0, 0, 16))
+        postService.reportComment(Report(0, 0, 16))
     }
 
     @Test(expected = InvalidOwnerIdException::class)
     fun ownerIdThrow() {
-        val wallService = WallService()
-        wallService.add(
+        val postService = WallService()
+        postService.add(
             Post(
                 id = 1,
                 text = "Text1",
@@ -249,13 +249,13 @@ class WallServiceTest {
                 postSource = PostSource()
             )
         )
-        wallService.reportComment(Report(5, 0, 6))
+        postService.reportComment(Report(5, 0, 6))
     }
 
     @Test
     fun reportNotThrow() {
-        val wallService = WallService()
-        wallService.add(
+        val postService = WallService()
+        postService.add(
             Post(
                 id = 1,
                 text = "Text1",
@@ -271,6 +271,6 @@ class WallServiceTest {
                 postSource = PostSource()
             )
         )
-        assertEquals(Report(reason = 1), wallService.reportComment(Report(reason = 1)))
+        assertEquals(Report(reason = 1), postService.reportComment(Report(reason = 1)))
     }
 }
