@@ -152,7 +152,7 @@ class WallService {
                 return comment
             }
         }
-        return throw PostNotFoundException("Not found post with id $postId")
+        return throw NotFoundIdException("Not found post with id $postId")
     }
 
     fun reportComment(report: Report): Report {
@@ -180,32 +180,38 @@ class NoteService {
     private var notes = mutableListOf<Note>()
     fun add(note: Note): Int {
         notes += note
-        note.noteId = notes.indexOf(note)
         return note.noteId
     }
 
     fun createComment(noteId: Int, noteComment: NoteComment): Int {
         if (noteComment.message.length > noteComment.minLength) {
-            notes[noteId].noteComments += noteComment
-            noteComment.noteCommentId = notes[noteId].noteComments.indexOf(noteComment)
-            return noteComment.noteCommentId
+            if (notes.find { it.noteId == noteId } != null) {
+                notes.find { it.noteId == noteId }!!.noteComments += noteComment
+                noteComment.noteCommentId = notes[noteId].noteComments.indexOf(noteComment)
+                return noteComment.noteCommentId
+            }
         }
         return -1
     }
 
     fun delete(noteId: Int): Int {
-        for (noteComm in notes[noteId].noteComments) {
-            noteComm.isDeleted = true
+        if (notes.find { it.noteId == noteId } != null) {
+            for (noteComm in notes.find { it.noteId == noteId }!!.noteComments) {
+                noteComm.isDeleted = true
+            }
+            notes.removeAt(noteId)
+            return 1
         }
-        notes.removeAt(noteId)
-        return 1
+        return -1
     }
 
     fun deleteComment(noteId: Int, commentId: Int): Int {
-        for (noteComm in notes[noteId].noteComments) {
-            if (noteComm.noteCommentId == commentId) {
-                noteComm.isDeleted = true
-                return 1
+        if (notes.find { it.noteId == noteId } != null) {
+            for (noteComm in notes.find { it.noteId == noteId }!!.noteComments) {
+                if (noteComm.noteCommentId == commentId) {
+                    noteComm.isDeleted = true
+                    return 1
+                }
             }
         }
         return -1
@@ -217,9 +223,11 @@ class NoteService {
     }
 
     fun editComment(noteId: Int, noteCommentId: Int, newMessage: String): Int {
-        if (newMessage.length > notes[noteId].noteComments[noteCommentId].minLength) {
-            notes[noteId].noteComments[noteCommentId].message = newMessage
-            return 1
+        if (notes.find { it.noteId == noteId } != null) {
+            if (newMessage.length > notes.find { it.noteId == noteId }!!.noteComments[noteCommentId].minLength) {
+                notes.find { it.noteId == noteId }!!.noteComments[noteCommentId].message = newMessage
+                return 1
+            }
         }
         return -1
     }
@@ -229,17 +237,25 @@ class NoteService {
     }
 
     fun getById(noteId: Int): Note {
-        return notes[noteId]
+        if (notes.find { it.noteId == noteId } == null) {
+            return throw NotFoundIdException("Not found note with id $noteId")
+        }
+        return notes.find { it.noteId == noteId }!!
     }
 
     fun getComments(noteId: Int): List<NoteComment> {
-        return notes[noteId].noteComments
+        if (notes.find { it.noteId == noteId } == null) {
+            return throw NotFoundIdException("Not found note with id $noteId")
+        }
+        return notes.find { it.noteId == noteId }!!.noteComments
     }
 
     fun restoreComment(noteId: Int, commentId: Int): Int {
-        if (notes[noteId].noteComments[commentId].isDeleted) {
-            notes[noteId].noteComments[commentId].isDeleted = false
-            return 1
+        if (notes.find { it.noteId == noteId } != null) {
+            if (notes.find { it.noteId == noteId }!!.noteComments[commentId].isDeleted) {
+                notes[noteId].noteComments[commentId].isDeleted = false
+                return 1
+            }
         }
         return -1
     }
@@ -304,9 +320,9 @@ fun main() {
 //    NOTE SERVICE
     val noteService = NoteService()
 
-    noteService.add(Note(2, "0", "", listOf()))
+    noteService.add(Note(0, "0", "", listOf()))
     noteService.add(Note(1, "1", "", listOf()))
-    noteService.add(Note(23, "2", "", listOf()))
+    noteService.add(Note(2, "2", "", listOf()))
 
     noteService.createComment(0, NoteComment(2, "jkhfg"))
     println(noteService.get())
@@ -314,10 +330,10 @@ fun main() {
     noteService.delete(1)
     println(noteService.get())
 
-    noteService.deleteComment(0,0)
+    noteService.deleteComment(0, 0)
     println(noteService.get())
 
-    val editedNote = Note(2,"3","", listOf())
+    val editedNote = Note(2, "3", "", listOf())
     println(editedNote)
     noteService.edit(editedNote, "new text")
     println(editedNote)
@@ -326,10 +342,8 @@ fun main() {
 
     println(noteService.getComments(0))
 
-    println(noteService.restoreComment(0,0))
+    println(noteService.restoreComment(0, 0))
     println(noteService.get())
-
-
 
 
 }
