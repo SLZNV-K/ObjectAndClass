@@ -142,7 +142,7 @@ class WallServiceTest {
         assertFalse(result)
     }
 
-    @Test(expected = PostNotFoundException::class)
+    @Test(expected = NotFoundIdException::class)
     fun shouldThrow() {
         val postService = WallService()
         postService.add(

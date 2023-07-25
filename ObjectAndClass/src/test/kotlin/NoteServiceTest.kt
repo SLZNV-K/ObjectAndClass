@@ -10,18 +10,17 @@ class NoteServiceTest {
         val noteService = NoteService()
         val result = noteService.add(note)
 
-        assertEquals(0, result)
+        assertEquals(2, result)
     }
 
     @Test
     fun createCommentTrue() {
         val note = Note(0, "", "kdsbdfkeg", listOf())
-        val comm = NoteComment(1, "yf")
         val noteService = NoteService()
         noteService.add(note)
-        val result = noteService.createComment(0, comm)
+        val result = noteService.createComment(0, NoteComment(1, "yfes"))
 
-        assertEquals(-1, result)
+        assertEquals(1, result)
     }
 
     @Test
@@ -29,13 +28,13 @@ class NoteServiceTest {
         val note = Note(0, "", "kdsbdfkeg", listOf())
         val noteService = NoteService()
         noteService.add(note)
-        val result = noteService.createComment(0, NoteComment(1, "ygf"))
+        val result = noteService.createComment(10, NoteComment(1, "fhgdf"))
 
-        assertEquals(0, result)
+        assertEquals(-1, result)
     }
 
     @Test
-    fun delete() {
+    fun deleteTrue() {
         val note = Note(
             0, "", "kdsbdfkeg", listOf(
                 NoteComment(0, ""),
@@ -47,6 +46,21 @@ class NoteServiceTest {
         val result = noteService.delete(0)
 
         assertEquals(1, result)
+    }
+
+    @Test
+    fun deleteFalse() {
+        val note = Note(
+            0, "", "kdsbdfkeg", listOf(
+                NoteComment(0, ""),
+                NoteComment(2, "")
+            )
+        )
+        val noteService = NoteService()
+        noteService.add(note)
+        val result = noteService.delete(10)
+
+        assertEquals(-1, result)
     }
 
     @Test
@@ -80,13 +94,23 @@ class NoteServiceTest {
     }
 
     @Test
-    fun edit() {
+    fun editTrue() {
         val note = Note(0, "", "text", listOf())
         val noteService = NoteService()
         noteService.add(note)
-        val result = noteService.edit(note, "new text")
+        val result = noteService.edit(0, "new text")
 
         assertEquals(1, result)
+    }
+
+    @Test
+    fun editFalse() {
+        val note = Note(0, "", "text", listOf())
+        val noteService = NoteService()
+        noteService.add(note)
+        val result = noteService.edit(10, "new text")
+
+        assertEquals(-1, result)
     }
 
     @Test
@@ -139,6 +163,15 @@ class NoteServiceTest {
         val result = noteService.getById(1)
 
         assertEquals(notes[1], result)
+    }
+
+    @Test(expected = NotFoundIdException::class)
+    fun getByIdWithThrow() {
+        val noteService = NoteService()
+        noteService.add(Note(0, "title", "text", listOf()))
+        noteService.add(Note(1, "title", "text", listOf()))
+        noteService.getById(19)
+
     }
 
     @Test
