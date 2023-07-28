@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="ChatServiceTest" tests="14" skipped="0" failures="0" errors="0" timestamp="2023-07-28T13:53:57" hostname="LAPTOP-33FPNSHN" time="0.304">
+  <properties/>
+  <testcase name="editMessageFalse" classname="ChatServiceTest" time="0.099"/>
+  <testcase name="deleteChatFalse" classname="ChatServiceTest" time="0.006"/>
+  <testcase name="getLastMessagesOfChats" classname="ChatServiceTest" time="0.012"/>
+  <testcase name="deleteMessageTrue" classname="ChatServiceTest" time="0.001"/>
+  <testcase name="deleteChatTrue" classname="ChatServiceTest" time="0.0"/>
+  <testcase name="getListOfChatMessagesFalse" classname="ChatServiceTest" time="0.0"/>
+  <testcase name="createMessageTrue" classname="ChatServiceTest" time="0.0"/>
+  <testcase name="createMessageFalse" classname="ChatServiceTest" time="0.0"/>
+  <testcase name="editMessageTrue" classname="ChatServiceTest" time="0.0"/>
+  <testcase name="getListOfChatMessagesTrue" classname="ChatServiceTest" time="0.172"/>
+  <testcase name="createChat" classname="ChatServiceTest" time="0.001"/>
+  <testcase name="getUnreadChatsCount" classname="ChatServiceTest" time="0.008"/>
+  <testcase name="deleteMessageFalse" classname="ChatServiceTest" time="0.0"/>
+  <testcase name="getChats" classname="ChatServiceTest" time="0.001"/>
+  <system-out><![CDATA[[Chat(userId=0, chatMessages=[ChatMessage(messageId=0, text=1, isIncoming=true, isRead=false)])]
+]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>
