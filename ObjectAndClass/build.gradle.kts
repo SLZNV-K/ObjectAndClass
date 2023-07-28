@@ -12,6 +12,7 @@ repositories {
 
 dependencies {
     testImplementation(kotlin("test"))
+    testImplementation ("com.github.stefanbirkner:system-lambda:1.2.0")
 }
 
 

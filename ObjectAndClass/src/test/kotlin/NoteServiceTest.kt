@@ -176,7 +176,7 @@ class NoteServiceTest {
 
     @Test
     fun getComments() {
-        val notes = mutableListOf<Note>(
+        val notes = mutableListOf(
             Note(
                 0, "title", "text", mutableListOf(
                     NoteComment(0, ""),
