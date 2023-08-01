@@ -78,7 +78,7 @@ class ChatServiceTest {
     }
 
     @Test
-    fun editMessageTrue() {
+    fun editMessage() {
         val chatService = ChatService()
         chatService.createChat(
             Chat(
@@ -88,13 +88,12 @@ class ChatServiceTest {
                 )
             )
         )
-        val result = chatService.editMessage(0, 0, "nt")
+        chatService.editMessage(0, 0, "nt")
 
-        assertTrue(result)
+        assertEquals("nt", chatService.getChats()[0].chatMessages[0].text)
     }
-
-    @Test
-    fun editMessageFalse() {
+    @Test(expected = NotFoundMessage::class)
+    fun editMessageThrow() {
         val chatService = ChatService()
         chatService.createChat(
             Chat(
@@ -104,9 +103,8 @@ class ChatServiceTest {
                 )
             )
         )
-        val result = chatService.editMessage(10, 0, "nt")
+        chatService.editMessage(0, 10, "nt")
 
-        assertFalse(result)
     }
 
     @Test
@@ -125,7 +123,7 @@ class ChatServiceTest {
         assertTrue(result)
     }
 
-    @Test
+    @Test(expected = NotFoundIdException::class)
     fun deleteMessageFalse() {
         val chatService = ChatService()
         chatService.createChat(
@@ -138,7 +136,6 @@ class ChatServiceTest {
         )
         val result = chatService.deleteMessage(10, 0)
 
-        assertFalse(result)
     }
 
     @Test
@@ -170,7 +167,7 @@ class ChatServiceTest {
         )
         val result = chatService.getLastMessagesOfChats()
 
-        assertEquals(listOf("1"), result)
+        assertEquals("1", result)
 
     }
 
@@ -190,9 +187,9 @@ class ChatServiceTest {
                 )
             )
         )
-        val output = tapSystemOut{chatService.getListOfChatMessages(0, 3, 1)}
+        val result = chatService.getListOfChatMessages(0, 3, 1)
 
-        assertEquals(listOf(ChatMessage(3, "3", true, isRead = false)).toString(), output.trim())
+        assertEquals(listOf(ChatMessage(3, "3", true, isRead = true)),result )
     }
 
     @Test(expected = NotFoundIdException::class)

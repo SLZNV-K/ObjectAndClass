@@ -95,10 +95,10 @@ fun main() {
             0, mutableListOf
                 (
                 ChatMessage(0, "не последнее", true, isRead = false),
-                ChatMessage(1, "последнее", false, isRead = true),
-                ChatMessage(2, "последнее", false, isRead = true),
+                ChatMessage(1, "не последнее", false, isRead = true),
+                ChatMessage(2, "не последнее", false, isRead = true),
                 ChatMessage(3, "не последнее", true, isRead = false),
-                ChatMessage(4, "последнее", false, isRead = false),
+                ChatMessage(4, "не последнее", false, isRead = false),
                 ChatMessage(5, "последнее", false, isRead = true),
             )
         )
@@ -114,24 +114,20 @@ fun main() {
     )
     chatService.createChat(
         Chat(
-            2, mutableListOf
-                (
-                ChatMessage(1, "не последнее", true, isRead = true),
-                ChatMessage(2, "последнее", false, isRead = true)
-            )
+            2, mutableListOf()
         )
     )
+//    println(chatService.getChats())
+//    println(chatService.createMessage(0,ChatMessage(3, "", true, isRead = false)))
+//    println(chatService.getChats())
+//    println(chatService.deleteChat(2))
+    println(chatService.deleteMessage(0,19))
     println(chatService.getChats())
-    println(chatService.createMessage(0,ChatMessage(3, "", true, isRead = false)))
-    println(chatService.getChats())
-    println(chatService.deleteChat(2))
-    println(chatService.deleteMessage(0,2))
-    println(chatService.getChats())
-    println(chatService.editMessage(1,2, "NEW MESSAGE"))
-    println(chatService.getChats())
+//    println(chatService.editMessage(1,2, "NEW MESSAGE"))
+//    println(chatService.getChats())
 
-    println(chatService.getUnreadChatsCount())
-    chatService.getLastMessagesOfChats()
+//    println(chatService.getUnreadChatsCount())
+//    println(chatService.getLastMessagesOfChats())
 
-    chatService.getListOfChatMessages(0,3,2)
+//    println(chatService.getListOfChatMessages(0,3,3))
 }
