@@ -15,7 +15,6 @@ class ChatService {
 
     fun createChat(chat: Chat): Boolean = chats.add(chat)
 
-
     fun deleteChat(id: Int): Boolean = chats.remove(chats.find { it.userId == id })
 
     fun getChats(): List<Chat> = chats
@@ -24,31 +23,24 @@ class ChatService {
         chats.find { it.userId == chatId }?.chatMessages?.add(chatMessage) ?: false
 
     fun editMessage(chatId: Int, messageId: Int, newText: String) {
-
-        chats.singleOrNull { it.userId == chatId }
-            .let { it?.chatMessages ?: throw NotFoundIdException("Not found chat with id $chatId") }
-            .let {
-                chats.find { it.userId == chatId }?.chatMessages?.find { it.messageId == messageId }
-                    ?: throw NotFoundMessage("Not found message with id $messageId")
-            }.text = newText
+        val chat = chats.find { it.userId == chatId } ?: throw NotFoundIdException("Not found chat with this id")
+        val chatMessage = chat.chatMessages.find { it.messageId == messageId }
+            ?: throw NotFoundMessage("Not found message with this id")
+        chatMessage.text = newText
     }
 
     fun deleteMessage(chatId: Int, messageId: Int): Boolean {
-        val chat = chats.find { it.userId == chatId }
-        val chatMessage = chats.find { it.userId == chatId }?.chatMessages?.find { it.messageId == messageId }
-        if (chat == null || chatMessage == null) {
-            return throw NotFoundIdException("Not found chat or message with this id")
-        }
-        chat.chatMessages.remove(chatMessage)
-        return true
+        val chat = chats.find { it.userId == chatId } ?: throw NotFoundIdException("Not found chat with this id")
+        val chatMessage = chat.chatMessages.find { it.messageId == messageId }
+            ?: throw NotFoundIdException("Not found message with this id")
+        return chat.chatMessages.remove(chatMessage)
     }
 
     fun getUnreadChatsCount(): Int = chats.filter { chat -> chat.chatMessages.any { !it.isRead && it.isIncoming } }.size
 
     fun getLastMessagesOfChats() =
         chats.joinToString(separator = "\n") {
-            if (it.chatMessages.isEmpty()) "Нет сообщений"
-            else it.chatMessages.last().text
+            it.chatMessages.lastOrNull()?.text ?: "Нет сообщений"
         }
 
     fun getListOfChatMessages(chatId: Int, startId: Int, messageCount: Int) =
@@ -58,8 +50,5 @@ class ChatService {
             .drop(startId)
             .take(messageCount)
             .toList()
-            .map {
-                if (it.isIncoming) it.isRead = true
-                it
-            }
+            .onEach { it.isRead = true }
 }

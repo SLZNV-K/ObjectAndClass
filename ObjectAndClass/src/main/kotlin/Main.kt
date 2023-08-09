@@ -121,13 +121,13 @@ fun main() {
 //    println(chatService.createMessage(0,ChatMessage(3, "", true, isRead = false)))
 //    println(chatService.getChats())
 //    println(chatService.deleteChat(2))
-    println(chatService.deleteMessage(0,19))
-    println(chatService.getChats())
+//    println(chatService.deleteMessage(0,19))
+//    println(chatService.getChats())
 //    println(chatService.editMessage(1,2, "NEW MESSAGE"))
 //    println(chatService.getChats())
 
 //    println(chatService.getUnreadChatsCount())
-//    println(chatService.getLastMessagesOfChats())
+    println(chatService.getLastMessagesOfChats())
 
-//    println(chatService.getListOfChatMessages(0,3,3))
+    println(chatService.getListOfChatMessages(0,3,3))
 }
